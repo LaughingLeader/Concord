@@ -1,20 +1,19 @@
---- Used to iterate over Entities with a specific Components
--- A Pool contain a any amount of Entities.
--- @classmod Pool
-
 local PATH = (...):gsub('%.[^%.]+$', '')
 
 local List = require(PATH..".list")
 
+--- Used to iterate over Entities with a specific Components
+--- A Pool contain a any amount of Entities.
+---@class Pool:table
 local Pool = {}
 Pool.__mt = {
    __index = Pool,
 }
 
 --- Creates a new Pool
--- @string name Name for the Pool.
--- @tparam table filter Table containing the required BaseComponents
--- @treturn Pool The new Pool
+---@param name string Name for the Pool.
+---@param filter table Table containing the required BaseComponents
+---@return Pool The new Pool
 function Pool.new(name, filter)
    local pool = setmetatable(List(), Pool.__mt)
 
@@ -27,8 +26,8 @@ function Pool.new(name, filter)
 end
 
 --- Checks if an Entity is eligible for the Pool.
--- @tparam Entity e Entity to check
--- @treturn boolean
+---@param e Entity Entity to check
+---@return boolean
 function Pool:eligible(e)
    for i=#self.__filter, 1, -1 do
       local component = self.__filter[i].__name
@@ -39,10 +38,10 @@ function Pool:eligible(e)
    return true
 end
 
--- Adds an Entity to the Pool, if it can be eligible.
--- @param e Entity to add
--- @treturn Pool self
--- @treturn boolean Whether the entity was added or not
+--- Adds an Entity to the Pool, if it can be eligible.
+---@param e Entity to add
+---@return Pool self
+---@return boolean Whether the entity was added or not
 function Pool:add(e, bypass)
    if not bypass and not self:eligible(e) then
       return self, false
@@ -54,9 +53,9 @@ function Pool:add(e, bypass)
    return self, true
 end
 
--- Remove an Entity from the Pool.
--- @param e Entity to remove
--- @treturn Pool self
+--- Remove an Entity from the Pool.
+---@param e Entity to remove
+---@return Pool self
 function Pool:remove(e)
    List.remove(self, e)
    self:onEntityRemoved(e)
@@ -65,8 +64,8 @@ function Pool:remove(e)
 end
 
 --- Evaluate whether an Entity should be added or removed from the Pool.
--- @param e Entity to add or remove
--- @treturn Pool self
+---@param e Entity to add or remove
+---@return Pool self
 function Pool:evaluate(e)
    local has  = self:has(e)
    local eligible = self:eligible(e)
@@ -81,26 +80,26 @@ function Pool:evaluate(e)
 end
 
 --- Gets the name of the Pool
--- @treturn string
+---@return string
 function Pool:getName()
    return self.__name
 end
 
 --- Gets the filter of the Pool.
--- Warning: Do not modify this filter.
--- @return Filter of the Pool.
+--- Warning: Do not modify this filter.
+---@return Filter of the Pool.
 function Pool:getFilter()
    return self.__filter
 end
 
 --- Callback for when an Entity is added to the Pool.
--- @tparam Entity e Entity that was added.
-function Pool:onEntityAdded(e) -- luacheck: ignore
+---@param e Entity Entity that was added.
+function Pool:onEntityAdded(e) --- luacheck: ignore
 end
 
--- Callback for when an Entity is removed from the Pool.
--- @tparam Entity e Entity that was removed.
-function Pool:onEntityRemoved(e)  -- luacheck: ignore
+--- Callback for when an Entity is removed from the Pool.
+---@param e Entity Entity that was removed.
+function Pool:onEntityRemoved(e)  --- luacheck: ignore
 end
 
 return setmetatable(Pool, {

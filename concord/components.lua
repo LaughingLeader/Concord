@@ -1,24 +1,23 @@
---- Container for registered ComponentClasses
--- @module Components
-
 local PATH = (...):gsub('%.[^%.]+$', '')
 
 local Type = require(PATH..".type")
 
+--- Container for registered ComponentClasses
+---@module Components
 local Components = {}
 
 --- Returns true if the containter has the ComponentClass with the specified name
--- @string name Name of the ComponentClass to check
--- @treturn boolean
+---@param name string Name of the ComponentClass to check
+---@return boolean
 function Components.has(name)
    return rawget(Components, name) and true or false
 end
 
 --- Returns true and the ComponentClass if one was registered with the specified name
--- or false and an error otherwise
--- @string name Name of the ComponentClass to check
--- @treturn boolean
--- @treturn Component or error string
+--- or false and an error otherwise
+---@param name string Name of the ComponentClass to check
+---@return boolean
+---@return Component or error string
 function Components.try(name)
    if type(name) ~= "string" then
       return false, "ComponentsClass name is expected to be a string, got "..type(name)..")"
@@ -33,8 +32,8 @@ function Components.try(name)
 end
 
 --- Returns the ComponentClass with the specified name
--- @string name Name of the ComponentClass to get
--- @treturn Component
+---@param name string Name of the ComponentClass to get
+---@return Component
 function Components.get(name)
    local ok, value = Components.try(name)
 

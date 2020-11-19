@@ -1,8 +1,6 @@
----
--- @module Concord
-
 local PATH = (...):gsub('%.init$', '')
 
+---@module Concord
 local Concord = {
    _VERSION     = "2.0 Beta",
    _DESCRIPTION = "A feature-complete ECS library",
@@ -32,11 +30,17 @@ local Concord = {
    ]]
 }
 
+---@type Entity
 Concord.entity     = require(PATH..".entity")
+---@type Component
 Concord.component  = require(PATH..".component")
+---@type Components
 Concord.components = require(PATH..".components")
+---@type System
 Concord.system     = require(PATH..".system")
+---@type World
 Concord.world      = require(PATH..".world")
+---@type Utils
 Concord.utils      = require(PATH..".utils")
 
 return Concord

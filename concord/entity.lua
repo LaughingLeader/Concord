@@ -1,20 +1,21 @@
---- An object that exists in a world. An entity
--- contains components which are processed by systems.
--- @classmod Entity
+
 
 local PATH = (...):gsub('%.[^%.]+$', '')
 
 local Components = require(PATH..".components")
 local Type       = require(PATH..".type")
 
+--- An object that exists in a world. An entity
+--- contains components which are processed by systems.
+---@class Entity:table
 local Entity = {}
 Entity.__mt = {
    __index = Entity,
 }
 
 --- Creates a new Entity. Optionally adds it to a World.
--- @tparam[opt] World world World to add the entity to
--- @treturn Entity A new Entity
+---@param world World World to add the entity to
+---@return Entity A new Entity
 function Entity.new(world)
    if (world ~= nil and not Type.isWorld(world)) then
       error("bad argument #1 to 'Entity.new' (world/nil expected, got "..type(world)..")", 2)
@@ -51,10 +52,10 @@ local function remove(e, name, componentClass)
 end
 
 --- Gives an Entity a Component.
--- If the Component already exists, it's overridden by this new Component
--- @tparam Component componentClass ComponentClass to add an instance of
--- @param ... additional arguments to pass to the Component's populate function
--- @treturn Entity self
+--- If the Component already exists, it's overridden by this new Component
+---@param componentClass Component ComponentClass to add an instance of
+---@vararg any[] additional arguments to pass to the Component's populate function
+---@return Entity self
 function Entity:give(name, ...)
    local ok, componentClass = Components.try(name)
 
@@ -68,10 +69,10 @@ function Entity:give(name, ...)
 end
 
 --- Ensures an Entity to have a Component.
--- If the Component already exists, no action is taken
--- @tparam Component componentClass ComponentClass to add an instance of
--- @param ... additional arguments to pass to the Component's populate function
--- @treturn Entity self
+--- If the Component already exists, no action is taken
+---@param componentClass Component ComponentClass to add an instance of
+---@vararg any[] to pass to the Component's populate function
+---@return Entity selfs
 function Entity:ensure(name, ...)
    local ok, componentClass = Components.try(name)
 
@@ -89,8 +90,8 @@ function Entity:ensure(name, ...)
 end
 
 --- Removes a Component from an Entity.
--- @tparam Component componentClass ComponentClass of the Component to remove
--- @treturn Entity self
+---@param componentClass Component ComponentClass of the Component to remove
+---@return Entity self
 function Entity:remove(name)
    local ok, componentClass = Components.try(name)
 
@@ -104,9 +105,9 @@ function Entity:remove(name)
 end
 
 --- Assembles an Entity.
--- @tparam function assemblage Function that will assemble an entity
--- @param ... additional arguments to pass to the assemblage function.
--- @treturn Entity self
+---@param assemblage function Function that will assemble an entity
+---@vararg any[] additional arguments to pass to the assemblage function.
+---@return Entity self
 function Entity:assemble(assemblage, ...)
    if type(assemblage) ~= "function" then
       error("bad argument #1 to 'Entity:assemble' (function expected, got "..type(assemblage)..")")
@@ -118,8 +119,8 @@ function Entity:assemble(assemblage, ...)
 end
 
 --- Destroys the Entity.
--- Removes the Entity from its World if it's in one.
--- @return self
+--- Removes the Entity from its World if it's in one.
+---@return self
 function Entity:destroy()
    if self.__world then
       self.__world:removeEntity(self)
@@ -128,8 +129,8 @@ function Entity:destroy()
    return self
 end
 
--- Internal: Tells the World it's in that this Entity is dirty.
--- @return self
+--- Internal: Tells the World it's in that this Entity is dirty.
+---@return self
 function Entity:__dirty()
    if self.__world then
       self.__world:__dirtyEntity(self)
@@ -139,8 +140,8 @@ function Entity:__dirty()
 end
 
 --- Returns true if the Entity has a Component.
--- @tparam Component componentClass ComponentClass of the Component to check
--- @treturn boolean
+---@param componentClass Component ComponentClass of the Component to check
+---@return boolean
 function Entity:has(name)
    local ok, componentClass = Components.try(name)
 
@@ -152,8 +153,8 @@ function Entity:has(name)
 end
 
 --- Gets a Component from the Entity.
--- @tparam Component componentClass ComponentClass of the Component to get
--- @treturn table
+---@param componentClass Component ComponentClass of the Component to get
+---@return table
 function Entity:get(name)
    local ok, componentClass = Components.try(name)
 
@@ -165,21 +166,21 @@ function Entity:get(name)
 end
 
 --- Returns a table of all Components the Entity has.
--- Warning: Do not modify this table.
--- Use Entity:give/ensure/remove instead
--- @treturn table Table of all Components the Entity has
+--- Warning: Do not modify this table.
+--- Use Entity:give/ensure/remove instead
+---@return table Table of all Components the Entity has
 function Entity:getComponents()
    return self.__components
 end
 
 --- Returns true if the Entity is in a World.
--- @treturn boolean
+---@return boolean
 function Entity:inWorld()
    return self.__world and true or false
 end
 
 --- Returns the World the Entity is in.
--- @treturn World
+---@return World
 function Entity:getWorld()
    return self.__world
 end
@@ -206,7 +207,7 @@ function Entity:deserialize(data)
       local componentData = data[i]
 
       if (not Components.has(componentData.__name)) then
-         error("bad argument #1 to 'Entity:deserialize' (ComponentClass '"..tostring(componentData.__name).."' wasn't yet loaded)") -- luacheck: ignore
+         error("bad argument #1 to 'Entity:deserialize' (ComponentClass '"..tostring(componentData.__name).."' wasn't yet loaded)") --- luacheck: ignore
       end
 
       local componentClass = Components[componentData.__name]
